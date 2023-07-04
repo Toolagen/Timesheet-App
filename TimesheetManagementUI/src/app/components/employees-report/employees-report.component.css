@@ -1,0 +1,26 @@
+h2{
+    text-align:center;
+}
+
+a
+{
+    cursor: pointer;
+}
+
+th 
+{
+    text-align: center;
+}
+
+.table-responsive
+{
+    overflow: auto;
+}
+
+.loading {
+    text-align: right;
+    font-size: 18px;    
+    padding: 15px;
+    font-weight: bold;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}

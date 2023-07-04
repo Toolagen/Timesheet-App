@@ -1,0 +1,28 @@
+<div>
+  <!-- <img src="https://www.toolagen.com/wp-content/uploads/2016/08/logo_400X100.png" width="250px"> -->
+</div> 
+<nav class="container navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <img src="assets\Toolagen-Logo.png" width="200px">
+      <!-- <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-time"></span> Timesheet Management</a> -->
+    </div>
+    <ul class="nav navbar-nav">            
+      <li ><a [routerLink] = "['/']"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+      <li><a  [routerLink] = "['/WeeklyTimesheetEntry']"><span class="glyphicon glyphicon-calendar"></span> Week</a></li>
+      <li *ngIf="isAdmin"><a [routerLink] = "['/report']"><span class="glyphicon glyphicon-file"></span> Report</a></li>      
+      <li *ngIf="isAdmin"><a [routerLink] = "['/TimeAllocation']"><span class="glyphicon glyphicon-time"></span> Time Allocation</a></li>
+     <li *ngIf="isAdmin"><a [routerLink] = "['/Admin']"><span class="glyphicon glyphicon-user"></span> Admin</a></li>
+     <li *ngIf="isAdmin"><a [routerLink] = "['/EmployeesReport']"><span class="glyphicon glyphicon-check" aria-hidden=true></span> Employees Report</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li *ngIf="loggedInUser"><a><span class="glyphicon glyphicon-user"></span> {{loggedInUser}}<span *ngIf="isAdmin"> (Admin)</span></a></li>
+      <li *ngIf="!loggedIn"><a [routerLink]="" (click)="login()"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      <li *ngIf="loggedIn"><a [routerLink]="" (click)="logout()"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+    </ul>
+  </div>
+</nav> 
+
+<router-outlet></router-outlet>
+
+

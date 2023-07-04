@@ -1,0 +1,22 @@
+h2{
+    text-align:center;
+}
+
+a
+{
+    cursor: pointer;
+}
+
+th 
+{
+    text-align: center;
+}
+
+.table-responsive
+{
+    overflow: auto;
+}
+.ttlHrs
+{
+    text-align:right;
+}

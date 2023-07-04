@@ -1,0 +1,70 @@
+<div class="container">
+  <form (ngSubmit)="f.form.valid && onTimesheetSubmit()" #f="ngForm" novalidate class="jumbotron">
+    <div class="form-group row">
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorDate }">
+        <label for="ex3">Date:</label>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+          <input class="form-control" type="date" name="taskdate" [(ngModel)]="timesheet.Date"
+            #taskdate="ngModel" (change)="getUserTimesheetDataByDate(timesheet.Date)" [max]="today">
+        </div>
+        <div *ngIf="validationErrorDate" class="help-block">{{ validationErrorDate }}</div>
+      </div>
+    </div>
+  </form>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+  <br>
+  <h4>Employees who have not filled out the timesheet data for <b>{{ timesheet.Date | date:'dd MMMM yyyy' }}</b>
+    <span *ngIf="loading" class="loading">
+      &nbsp;Loading Data...
+    </span>
+  </h4>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Work Date</th>
+          <th>Employees Names</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ timesheet.Date | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ user.UserName }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+
+  <div>
+    <div class="container">
+      <div class="text-center">
+        <!-- pager -->
+        <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+          <li [ngClass]="{ 'disabled': pager.currentPage === 1 }">
+            <a (click)="setPage(1)">First</a>
+          </li>
+          <li [ngClass]="{ 'disabled': pager.currentPage === 1 }">
+            <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+          </li>
+          <li *ngFor="let page of pager.pages" [ngClass]="{ 'active': pager.currentPage === page }">
+            <a (click)="setPage(page)">{{ page }}</a>
+          </li>
+          <li [ngClass]="{ 'disabled': pager.currentPage === pager.totalPages }">
+            <a (click)="setPage(pager.currentPage + 1)">Next</a>
+          </li>
+          <li [ngClass]="{ 'disabled': pager.currentPage === pager.totalPages }">
+            <a (click)="setPage(pager.totalPages)">Last</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
