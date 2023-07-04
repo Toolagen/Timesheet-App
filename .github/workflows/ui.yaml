@@ -1,0 +1,43 @@
+name: Angular Azure Deployment
+
+on:
+  push:
+    branches:
+      - main  # Change this to the branch you want to trigger the deployment on
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 18
+        
+    - name: Install dependencies
+      run: |
+        cd TimesheetManagementUI
+        npm install --legacy-peer-deps
+      
+    - name: Build Angular app
+      run: |
+        cd TimesheetManagementUI
+        npm run build
+      
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: TimesheetManagementUI/dist
+      
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: toolagen-timesheet-ui
+        slot-name: production  # Change this to the deployment slot name if using slots
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE}}
+        package: ./TimesheetManagementUI/dist
