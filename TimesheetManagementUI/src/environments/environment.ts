@@ -5,6 +5,5 @@
 
 export const environment = {
   production: false,
-  // origin: 'http://localhost:3000'
-  origin: 'https://toolagen-timesheet-server.azurewebsites.net'
+  origin: 'http://localhost:3000'
 };

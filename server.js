@@ -1,6 +1,7 @@
 
-var express = require('express');
-var path = require('path');
+const express = require('express');
+const path = require('path');
+const app = express();
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -91,16 +92,18 @@ passport.use(new OIDCStrategy({
   }
 ));
 
-var app = express();
+
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+// app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'TimesheetManagementUI/dist')));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
@@ -128,6 +131,9 @@ var timesheet = require('./routes/timesheets');
 var users = require('./routes/users');
 var clients = require('./routes/clients');
 var timeAllocation = require('./routes/timeAllocation');
+app.get('/', (req,res) => {
+  res.sendFile(process.cwd()+"/TimesheetManagementUI/dist/Index.html")
+});
 
 
 app.use('/', routes);
@@ -138,7 +144,9 @@ app.use('/api/v1/users', users);
 app.use('/api/v1/clients', clients);
 app.use('/api/v1/timeAllocation', timeAllocation);
 
-
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'TimesheetManagementUI', 'dist/index.html'));
+});
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');

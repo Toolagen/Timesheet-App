@@ -161,7 +161,7 @@ router.get('/', function (req, res) {
     res.render('index', { user: req.user });
 });
 
-router.get('/login',
+router.get('/auth/login',
     function (req, res, next) {
         passport.authenticate('azuread-openidconnect',
             {
@@ -206,7 +206,10 @@ router.post('/auth/openid/return',
         if (req.user) {
             if (req.user.oid) {
                 var token = genToken(req.user);
-                res.redirect(config.clientUrl + "/login?token=" + token.token + "&key=" + req.user.upn);
+                res.cookie('token',  token.token);
+                res.cookie('key', req.user.upn);
+        
+                res.redirect(config.clientUrl + "/login");
             }
         }
     }

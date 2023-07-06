@@ -30,7 +30,7 @@ export class AppComponent {
   }
 
   login() {
-    window.open(environment.origin + '/login', "_self");
+    window.open(environment.origin + '/auth/login', "_self");
   }
 
   logout() {
