@@ -1,0 +1,161 @@
+<div class="container">
+  <form (ngSubmit)="f.form.valid && onDataSubmit()" #f="ngForm" novalidate class="jumbotron">
+    <div class="form-group row">
+
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorClient }">
+        <label *ngIf="!loadingClients" for="ex1">Clients:</label>
+        <label *ngIf="loadingClients" for="ex1"><i class="glyphicon glyphicon-refresh"></i>Loading Clients...</label>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+          <select class="form-control" [ngModel]="timeAllocation.ClientId" name="clientselect" (ngModelChange)="onClientChange($event)">
+            <option value="" selected disabled>Select Client*</option>
+            <option [value]="client.Id" *ngFor="let client of clients">
+              {{client.Name}}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="validationErrorClient" class="help-block">{{validationErrorClient}}</div>
+      </div>
+
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorProject }">
+        <label *ngIf="!loadingProjects" for="ex1">Projects:</label>
+        <label *ngIf="loadingProjects" for="ex1"> <i class="glyphicon glyphicon-refresh"></i> Loading Projects... </label>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+          <select class="form-control" [(ngModel)]="timeAllocation.ProjectId" name="projectselect" (ngModelChange)="onProjectChange()">
+            <option value="" selected disabled>Select Project*</option>
+            <option [value]="project.Id" *ngFor="let project of projects">
+              {{project.Name}}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="validationErrorProject" class="help-block">{{validationErrorProject}}</div>
+      </div>
+
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorHour}">
+        <label for="ex3">Allocate Hours:</label>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+          <input class="form-control" placeholder="Enter hours *" type="number" name="hours" [(ngModel)]="timeAllocation.HoursAllocated"
+            #hours="ngModel" min="0" max="8">
+        </div>
+        <div *ngIf="validationErrorHour" class="help-block">{{validationErrorHour}}</div>
+      </div>
+
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorDate }">
+        <label for="ex3">Date:</label>
+        <div class="input-group">
+          <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+          <input class="form-control" type="date" name="taskdate" [(ngModel)]="timeAllocation.Date" #taskdate="ngModel"
+            max={{today}}>
+        </div>
+        <div *ngIf="validationErrorDate" class="help-block">{{validationErrorDate}}</div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div *ngIf="timeAllocation.Id" class="col-md-2">
+        <button [disabled]="loading" type="submit" class="btn btn-primary">Update</button>
+      </div>
+      <div *ngIf="timeAllocation.Id" class="col-md-2">
+        <button [disabled]="loading" type="text" class="btn btn-primary" (click)="CancelEdit()">Cancel</button>
+      </div>
+      <div *ngIf="!timeAllocation.Id" class="col-md-2">
+        <button [disabled]="loading" type="submit" class="btn btn-primary">Save</button>
+      </div>
+      <div class="col-md-2">
+        <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+      </div>
+    </div>
+  </form>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{successMessage}}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-success">
+    {{errorMessage}}
+  </div>
+
+  <div class="row">
+      <h3>&nbsp;&nbsp;Hours Allocated to Clients: <span *ngIf="loadingAllocation" class="loading">
+          <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+          &nbsp;Loading...</span></h3>    
+    <div class="column">
+      <div class="card" *ngIf="nodata">
+        <div class="row">
+          <div class="col-md-12 nodata">
+            <p>No records to display.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column" *ngFor="let timeAllocation of timeAllocationdetails">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-9 col-sm-9 col-xs-9 bold">
+            <p>{{timeAllocation.Client}}</p>
+          </div>
+          <div class="col-md-3 col-sm-3 col-xs-3">
+            <div class="row">
+              <div class="col-md-5 col-sm-5 col-xs-5">
+                <i title="Edit" class="glyphicon glyphicon-pencil pointer" (click)="EditAllocationDetail(timeAllocation)"></i>
+              </div>
+              <div class="col-md-5 col-sm-5 col-xs-5">
+                <i title="Delete" class="glyphicon glyphicon-trash pointer" (click)="DeleteAllocationDetail(timeAllocation.Id)"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-sm-4 col-xs-4">
+            <p>Project</p>
+          </div>
+          <div class="col-md-8 col-sm-8 col-xs-8">
+            <p>&ndash; &nbsp; {{timeAllocation.Project}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-sm-4 col-xs-4">
+            <p>Allocated&nbsp;Date</p>
+          </div>
+          <div class="col-md-8 col-sm-8 col-xs-8">
+            <p>&ndash; &nbsp; {{timeAllocation.Date | date : 'dd/MM/yyyy'}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-sm-4 col-xs-4">
+            <p>Allocated</p>
+          </div>
+          <div class="col-md-8 col-sm-8 col-xs-8">
+            <p>&ndash; &nbsp; {{timeAllocation.HoursAllocated}} Hrs</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-sm-4 col-xs-4">
+            <p>Utilised</p>  
+          </div>
+          <div class="col-md-8 col-sm-8 col-xs-8">
+            <p>&ndash; &nbsp; {{timeAllocation.HoursUtilised}} Hrs</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 col-sm-4 col-xs-4">
+            <p>Remaining</p>
+          </div>
+          <div class="col-md-8 col-sm-8 col-xs-8"> 
+            <p>&ndash; &nbsp; {{timeAllocation.HoursRemaining}} Hrs</p>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <p class="modified">
+              last modified: {{timeAllocation.ModifiedDate | date: 'MMM dd, yyyy'}}</p>
+          </div>
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>
+</div>
+

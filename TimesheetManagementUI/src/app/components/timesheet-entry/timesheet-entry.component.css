@@ -1,0 +1,55 @@
+h2{
+    text-align:center;
+}
+
+a
+{
+    cursor: pointer;
+}
+
+th 
+{
+    text-align: center;
+}
+
+.table-responsive
+{
+    overflow: auto;
+}
+
+.loading {
+    text-align: right;
+    font-size: 18px;    
+    padding: 15px;
+    font-weight: bold;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+@keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  .container {
+    animation: fade-in 1s ease-in-out;
+  }
+  
+  .welcome {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .name {
+    text-align: center;
+    font-size: 48px;
+    color: #0000ff;
+    margin-bottom: 20px;
+  }
+  
+  .nice-day {
+    text-align: center;
+    font-size: 20px;
+    color: #666;
+  }

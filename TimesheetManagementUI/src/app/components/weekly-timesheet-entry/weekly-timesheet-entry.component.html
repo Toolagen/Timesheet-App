@@ -1,0 +1,249 @@
+<div class="container backgroundcolor">
+    <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8">
+            <h4>Weekly Timesheet Data from
+                <button title="Click for Previous Week Data " class="btn" (click)="previousweek()">
+                    <span class="glyphicon glyphicon-triangle-left"></span>
+                </button>
+                <span class="text-bold">{{FromDate | date : 'dd MMM yyyy'}} - {{ToDate | date: 'dd MMM yyyy'}}</span>
+                <button title="Click for Next Week Data" class="btn" [disabled]="NextWeekDate" (click)="nextweek()">
+                    <span class="glyphicon glyphicon-triangle-right"></span>
+                </button>
+            </h4>
+        </div>
+        <div *ngIf="loadingTimesheets" class="col-md-4 loading">
+            <span>
+                <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                &nbsp;Loading Data... &nbsp; </span>
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4 loading" *ngIf="!loadingTimesheets">
+            <span>Total Work Hours: {{TotalHoursCount | number}}</span>
+        </div>
+    </div>
+
+    <div *ngIf="successMessage" class="custom-dialog-outer-container">
+        <div class="custom-dialog">
+            <div class="custom-dialog-inner-container alert {{alertClass}}">
+                <h4 class="contentaligncenter">
+                    <span class="glyphicon {{icon}}"></span>&nbsp; {{successMessage}}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="row smallscreen top-bottom-rule contentaligncenter">
+        <div class="col-md-4 increase-margin">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Clients</label>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Projects</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1 billablemargin">
+                    <label></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1 align-right">
+            <label>MON</label>            
+        </div>
+        <div class="col-md-1">
+            <label>TUE</label>
+        </div>
+        <div class="col-md-1">
+            <label>WED</label>
+        </div>
+        <div class="col-md-1">
+            <label>THU</label>
+        </div>
+        <div class="col-md-1">
+            <label>FRI</label>
+        </div>
+        <div class="col-md-1">
+            <label>SAT</label>
+        </div>
+        <div class="col-md-1">
+            <label>SUN</label>
+        </div>
+    </div>
+    <div *ngIf="NoData" class="contentaligncenter stripeColor">
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Data not available.</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row stripeColor" *ngFor="let weeks of timesheetdisplay; let i = index" [ngClass]="{'errordisplay' : duplicateErrorHighlight.indexOf(i) >= 0}">
+        <div class="col-md-4 increase-margin">
+            <div class="row">
+                <div class="col-md-11 reduce-margin">
+                    <div class="row no-gutters">
+                        <div class="col-md-6">
+                            <div class="largescreen text-bold">Clients</div>
+                            <select class="form-control" [(ngModel)]="weeks.ClientId" (ngModelChange)="onClientChange(i)">
+                                <option value="" selected disabled>Select Client*</option>
+                                <ng-container *ngFor="let client of clients">
+                                    <option [value]="client.Id">{{client.Name}}</option>
+                                </ng-container>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="largescreen text-bold">Projects</div>
+                            <select class="form-control" [(ngModel)]="weeks.ProjectId" (ngModelChange)="onProjectChange(i)"
+                                [ngClass]="{'errordisplay' : existingProjectErrorHighlight.indexOf(i) >= 0}">
+                                <option [ngValue]="null" disabled selected>Select Project*</option>
+                                <ng-container *ngFor="let project of projects">
+                                    <ng-container *ngIf="weeks.ClientId == project.ClientId">
+                                        <option [value]="project.Id">{{project.Name}}</option>
+                                    </ng-container>
+                                </ng-container>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 top-margin">
+                            <div class="largescreen  text-bold">Jobs</div>
+                            <select class="form-control" [(ngModel)]="weeks.JobId" [ngClass]="{'errordisplay' : existingJobErrorHighlight.indexOf(i) >= 0}"
+                                (ngModelChange)="onJobChange($event, i)">
+                                <option [ngValue]="null" disabled selected>Select Job*</option>
+                                <ng-container *ngFor="let job of jobs">
+                                    <ng-container *ngIf="weeks.ProjectId == job.ProjectId">
+                                        <option [value]="job.Id">{{job.Name}}</option>
+                                    </ng-container>
+                                </ng-container>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="largescreen text-bold">Comments</div>
+                            <textarea class="form-control top-margin" placeholder="Comments (Maximum 500 characters only)"
+                                [(ngModel)]="weeks.Comments" maxlength="500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1" title="Billable tasks">
+                    <div class="largescreen text-bold">Billable ?</div>
+                    <input class="big-checkbox" type="checkbox" [(ngModel)]="weeks.IsBillable" #isBillable="ngModel"
+                        name="IsBillable" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-1 form-horizontal" *ngFor="let weekString of weekValues">
+            <div class="row form-group">
+                <label class="control-label col-xs-5 col-sm-3 largescreen text-bold">{{weekString}}:</label>
+                <div class="col-xs-7 col-sm-9 col-md-12">
+                    <input type="number" class="form-control" [(ngModel)]="weeks[weekString][0].Hours" (input)="HourChange(i, weekString, $event)"
+                        (keypress)="DecimalValidate($event)" min="0" max="24" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-1 iconmargin">
+            <i title="Delete" class="glyphicon glyphicon-trash pointer" (click)="DeleteRow(i)"></i>
+            <span *ngIf="deleteTimesheets && loader == i">&nbsp;
+                <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            </span>
+        </div>
+
+    </div>
+
+    <!-- TO ADD NEW ENTRY -->
+    <div class="row stripeColor" *ngFor="let weeks of NewlyEnteredItems; let i = index" [ngClass]="{'errordisplay' : newduplicateErrorHighlight.indexOf(i) >= 0}">
+        <div class="col-md-4 increase-margin">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="row no-gutters">
+                        <div class="col-md-6">
+                            <div class="largescreen text-bold">Clients</div>
+                            <select class="form-control" [(ngModel)]="weeks.ClientId" (ngModelChange)="onNewRowClientChange(i)"
+                                [ngClass]="{'errordisplay' : newClientErrorHighlight.indexOf(i) >= 0}">
+                                <option [ngValue]="null" disabled selected>Select Client*</option>
+                                <ng-container *ngFor="let client of clients">
+                                    <option [value]="client.Id">{{client.Name}}</option>
+                                </ng-container>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="largescreen text-bold">Projects</div>
+                            <select class="form-control" [(ngModel)]="weeks.ProjectId" (ngModelChange)="onNewRowProjectChange(i)"
+                                [ngClass]="{'errordisplay' : newProjectErrorHighlight.indexOf(i) >= 0}">
+                                <option [ngValue]="null" disabled selected>Select Project*</option>
+                                <ng-container *ngFor="let project of projects">
+                                    <ng-container *ngIf="weeks.ClientId == project.ClientId">
+                                        <option [value]="project.Id">{{project.Name}}</option>
+                                    </ng-container>
+                                </ng-container>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 top-margin">
+                            <div class="largescreen  text-bold">Jobs</div>
+                            <select class="form-control" [(ngModel)]="weeks.JobId" [ngClass]="{'errordisplay' : newJobErrorHighlight.indexOf(i) >= 0}"
+                                (ngModelChange)="onNewJobChange($event, i)">
+                                <option [ngValue]="null" disabled selected>Select Job*</option>
+                                <ng-container *ngFor="let job of jobs">
+                                    <ng-container *ngIf="weeks.ProjectId == job.ProjectId">
+                                        <option [value]="job.Id">{{job.Name}}</option>
+                                    </ng-container>
+                                </ng-container>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="largescreen text-bold">Comments</div>
+                            <textarea class="form-control top-margin" placeholder="Comments (Maximum 500 characters only)"
+                                [(ngModel)]="weeks.Comments" maxlength="500"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1" title="Select it for billable tasks">
+                    <div class="largescreen text-bold">Billable ?</div>
+                    <input class="big-checkbox" type="checkbox" [(ngModel)]="weeks.IsBillable" #isBillable="ngModel"
+                        name="IsBillable" disabled>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1 form-horizontal" *ngFor="let weekString of weekValues">
+            <div class="row form-group">
+                <label class="control-label col-xs-5 col-sm-3 largescreen text-bold">{{weekString}}:</label>
+                <div class="col-xs-7 col-sm-9 col-md-12">
+                    <input type="number" class="form-control" [(ngModel)]="weeks[weekString][0].Hours" (input)="NewHourChange(i, weekString, $event)"
+                        (keypress)="DecimalValidate($event)" min="0" max="24" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1 iconmargin">
+            <i title="Delete" class="glyphicon glyphicon-trash pointer" (click)="DeleteNewRow(i)"></i>
+        </div>
+    </div>
+    <!-- END OF NEW ENTRY -->
+    <div class="row top-bottom-rule contentaligncenter">
+        <div class="col-md-4 increase-margin">
+            <label>Total Hours</label>
+        </div>
+        <div class="col-md-1 form-horizontal" *ngFor="let weekString of weekValues">
+            <div class="row">
+                <label class="col-xs-5 col-sm-3 largescreen text-bold">{{weekString}}:</label>
+                <div class="col-xs-5 col-sm-3 col-md-12">
+                    <label>{{TotalWeeklyHours[weekString] | number}}</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary btnstyle" (click)="AddNewRow()" [disabled]="deleteTimesheets || loadingTimesheets || dataUpdate"><span
+            class="glyphicon glyphicon-plus-sign"></span> New Row</button>
+    <button class="btn btn-primary btnstyle" (click)="TimeSheetSave()" [disabled]="deleteTimesheets || loadingTimesheets || dataUpdate">
+        Save </button>
+    <span *ngIf="dataUpdate" class="loading">
+        <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+        &nbsp;Updating Data... </span>
+    <p class="text-bold">Note: Timesheet data will be deleted automatically, if all the hour values in a row is 0.</p>
+</div>

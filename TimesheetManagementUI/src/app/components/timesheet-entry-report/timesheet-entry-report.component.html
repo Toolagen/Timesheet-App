@@ -1,0 +1,379 @@
+<!-- <div class="container">
+  <h1>Coming Soon...</h1>
+</div> -->
+
+<div class="container">
+  <!-- <h4>Timesheets of current week will be loaded by default.</h4>
+  <h5>You can select any two date ranges later on.</h5> -->
+  <div class="form-group row">
+    <div class="col-md-3">
+      <label for="ex3">From Date:</label>
+      <div class="input-group">
+        <span class="input-group-addon">
+          <i class="glyphicon glyphicon-calendar"></i>
+        </span>
+        <input class="form-control" type="date" name="fromDate" [(ngModel)]="weeklyTimesheetEntry.FromDate" #fromDate="ngModel"
+          (change)="getAllTimesheetDataByDateRange(weeklyTimesheetEntry.FromDate,weeklyTimesheetEntry.ToDate)" max="{{today}}"
+          [disabled]="this.timesheetVisible">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <label for="ex3">To Date:</label>
+      <div class="input-group">
+        <span class="input-group-addon">
+          <i class="glyphicon glyphicon-calendar"></i>
+        </span>
+        <input class="form-control" type="date" name="toDate" [(ngModel)]="weeklyTimesheetEntry.ToDate" #toDate="ngModel"
+          (change)="getAllTimesheetDataByDateRange(weeklyTimesheetEntry.FromDate,weeklyTimesheetEntry.ToDate)" max="{{today}}"
+          [disabled]="this.timesheetVisible">
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="form-group row">
+    <div class="col-md-3">
+      <label *ngIf="!loadingClients" for="ex1">Filter By Clients:</label>
+      <label *ngIf="loadingClients" for="ex1">
+        <i class="glyphicon glyphicon-refresh"></i> Loading Clients...</label>
+      <div class="input-group">
+        <span class="input-group-addon">
+          <i class="glyphicon glyphicon-filter"></i>
+        </span>
+        <select class="form-control" [ngModel]="filterClientId" name="clientselectFilter" [disabled]="this.timesheetVisible"
+          #clientselect="ngModel" (ngModelChange)="onClientChangeFilter($event)">
+          <option value="">-- All Clients --</option>
+          <option [value]="client.Id" *ngFor="let client of clients">
+            {{client.Name}}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <label *ngIf="!loadingProjects" for="ex1">Filter By Projects:</label>
+      <label *ngIf="loadingProjects" for="ex1">
+        <i class="glyphicon glyphicon-refresh"></i> Loading Projects...</label>
+      <div class="input-group">
+        <span class="input-group-addon">
+          <i class="glyphicon glyphicon-filter"></i>
+        </span>
+        <select class="form-control" [ngModel]="filterProjectId" name="projectselectFilter" [disabled]="this.timesheetVisible" #projectselect="ngModel"
+          (ngModelChange)="onProjectChangeFilter($event)">
+          <option value="">-- All Projects --</option>
+          <option [value]="project.Id" *ngFor="let project of projects">
+            {{project.Name}}
+          </option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="col-md-3">
+      <label *ngIf="!loadingUsers" for="ex1">Filter By Users:</label>
+      <label *ngIf="loadingUsers" for="ex1">
+        <i class="glyphicon glyphicon-refresh"></i> Loading Users...</label>
+      <div class="input-group">
+        <span class="input-group-addon">
+          <i class="glyphicon glyphicon-filter"></i>
+        </span>
+        <select class="form-control" [ngModel]="filterUserId" name="userselect" [disabled]="this.timesheetVisible" #userselect="ngModel"
+          (ngModelChange)="onUserChangeFilter($event)">
+          <option value="">-- All Users --</option>
+          <option [value]="user.id" *ngFor="let user of users">
+            {{user.UserName}}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <label for="ex1">Filter By Billable:</label>
+      <div class="input-group">
+        <span class="input-group-addon">
+          <i class="glyphicon glyphicon-filter"></i>
+        </span>
+        <select class="form-control" [ngModel]="filterBillable" name="billableselect" [disabled]="this.timesheetVisible"
+          #billableselect="ngModel" (ngModelChange)="onBillableChange($event)">
+          <option [value]="1">--All--</option>
+          <option [value]="2">Billable</option>
+          <option [value]="3">Non Billable</option>
+        </select>
+      </div>
+    </div>
+    
+    
+    <!--dropdown to change the page size. Default to 50. Give options to 50, 100, 250 -->
+    
+    
+      <!-- <div class="col-md-3 mt-3 mb-3">
+       <br>
+        <label for="ex1">Filter By Pages:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-filter"></i>
+          </span>
+          <select [(ngModel)]="selectedPageSize" (ngModelChange)="onPageSizeChange()" class="form-control">
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+            <option value="250">250</option>
+          </select>
+        </div>
+      </div> -->
+
+
+      <div class="col-md-3 mt-3 mb-3">
+        <br>
+        <label for="ex1">Filter By Pages:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-filter"></i>
+          </span>
+          <select [(ngModel)]="selectedPageSize" (ngModelChange)="onPageSizeChange()" class="form-control">
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+            <option value="250">250</option>
+          </select>
+        </div>
+      </div>
+      
+    <!-- filter by active/inactive-->
+      <div class="col-md-3 mt-3 mb-3">
+        <br>
+        <label for="ex1">Filter By Status:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-filter"></i>
+          </span>
+          <select [(ngModel)]="selectedProjectStatus" (ngModelChange)="onProjectStatusChange()" class="form-control">
+            <option value=1 selected>Active Clients & Projects</option>
+            <option value=2 >Inactive Clients & Projects</option>
+          </select>
+        </div>
+      </div> 
+    
+    
+    
+    
+  
+    
+    <!-- <div class="col-md-3">
+        <label for="ex1"></label>
+        <div class="input-group">
+            <button  class="btn btn-primary" (click)="ExportTimesheetData()" [disabled]="loadingTimesheets">Export Grid Data To CSV</button>
+        </div>
+    </div> -->
+  </div>
+
+
+
+
+  <!-- Timesheet Edit section -->
+  <form (ngSubmit)="f.form.valid && onTimesheetSubmit()" #f="ngForm" novalidate *ngIf="this.timesheetVisible" class="jumbotron">
+    <div class="form-group row">
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorDate}">
+        <label for="ex3">Date:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-calendar"></i>
+          </span>
+          <input class="form-control" type="date" name="taskdate" [(ngModel)]="timesheet.Date" #taskdate="ngModel" max="{{today}}"
+            (change)="getUserTimesheetDataByDate(timesheet.Date)">
+        </div>
+        <!-- <div *ngIf="!validationErrorDate && f.submitted && !taskdate.valid" class="help-block">Date is required</div> -->
+        <div *ngIf="validationErrorDate" class="help-block">{{validationErrorDate}}</div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorClient }">
+        <label for="ex1">Clients:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-tasks"></i>
+          </span>
+          <select class="form-control" [ngModel]="timesheet.ClientId" name="clientselect" (ngModelChange)="onClientChange($event)">
+            <option value="" selected disabled>Please select client *</option>
+            <option [value]="client.Id" *ngFor="let client of clients">
+              {{client.Name}}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="validationErrorClient" class="help-block">{{validationErrorClient}}</div>
+      </div>
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorProject }">
+        <label for="ex1">Projects:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-tasks"></i>
+          </span>
+          <select class="form-control" [ngModel]="timesheet.ProjectId" name="projectselect" (ngModelChange)="onProjectChange($event)"
+            #projectselect="ngModel">
+            <option value="" selected disabled>Please select project *</option>
+            <option [value]="project.Id" *ngFor="let project of projects">
+              {{project.Name}}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="validationErrorProject" class="help-block">{{validationErrorProject}}</div>
+      </div>
+
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorJob }">
+        <label *ngIf="!loadingJobs" for="ex2">Jobs:</label>
+        <label *ngIf="loadingJobs" for="ex2">
+          <i class="glyphicon glyphicon-refresh"></i> Loading Jobs...</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-tasks"></i>
+          </span>
+          <select class="form-control" [ngModel]="timesheet.JobId" name="jobselect" (ngModelChange)="onJobChange($event)"
+            #jobselect="ngModel">
+            <option value="" selected disabled>Please select job *</option>
+            <option [value]="job.Id" *ngFor="let job of jobs">
+              {{job.Name}}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="validationErrorJob" class="help-block">{{validationErrorJob}}</div>
+      </div>
+
+      <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorHour}">
+        <label for="ex3">Hours:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-time"></i>
+          </span>
+          <input class="form-control" placeholder="Enter hours *" type="number" name="hours" [(ngModel)]="timesheet.Hours"
+            #hours="ngModel" min="0" max="8">
+        </div>
+        <!-- <div *ngIf="!validationErrorHour && f.submitted && !hours.valid" class="help-block">Hours is required</div> -->
+        <div *ngIf="validationErrorHour" class="help-block">{{validationErrorHour}}</div>
+      </div>
+
+
+
+
+
+      <div class="col-md-12">
+        <label for="ex3">Comments:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-list-alt"></i>
+          </span>
+          <textarea class="form-control" placeholder="Enter comments (optional) (Maximum 500 characters only)" id="comments"
+            name="comments" [(ngModel)]="timesheet.Comments" maxlength="500" (focusout)="RemoveCommentWhiteSpaces()"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="checkbox" title="Select it for billable tasks">
+      <label>
+        <input type="checkbox" value="" [(ngModel)]="timesheet.IsBillable" #isBillable="ngModel" name="IsBillable">Is
+        Billable?</label>
+    </div>
+    <div *ngIf="timesheet.Id" class="col-md-2">
+      <button [disabled]="loading" type="submit" class="btn btn-primary btn-block">Update</button>
+    </div>
+    <div *ngIf="timesheet.Id" class="col-md-2">
+      <button [disabled]="loading" type="text" class="btn btn-default btn-block" (click)="CancelEdit()">Cancel</button>
+    </div>
+    <div *ngIf="!timesheet.Id" class="col-md-2">
+      <button [disabled]="loading" type="submit" class="btn btn-primary btn-block">Add</button>
+    </div>
+    <div class="col-md-2">
+      <img *ngIf="loading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+    </div>
+
+
+  </form>
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{successMessage}}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{errorMessage}}
+  </div>
+  <br>
+  <br>
+
+  <h4>
+    <span *ngIf="loadingTimesheets">
+      <i class="glyphicon glyphicon-refresh"></i> Loading...</span>
+    <span *ngIf="this.filterUserId">
+      <b>{{ this.selectedUser.UserName}}</b>- </span>Timesheet data from
+    <b>{{weeklyTimesheetEntry.FromDate | date:'dd MMM yyyy'}} To {{weeklyTimesheetEntry.ToDate | date:'dd MMM yyyy'}}</b>
+    <span *ngIf="this.filterProjectId">For project
+      <b>{{this.selectedProject.Name}}</b>
+    </span>
+
+    <h4 class="ttlHrs">Total Work Hours = {{this.totalHours}} </h4>
+  </h4>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <!-- <th>#</th> -->
+          <th>User</th>
+          <th>Client</th>
+          <th>Project</th>
+          <th>Job</th>
+          <th>Work Date</th>
+          <th>Work Hours</th>
+          <th>Comments</th>
+          <th>Is Billable?</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="!ShowTimesheetData">
+          <td colspan="9">No data found...</td>
+        </tr>
+        <tr *ngFor="let timesheet of pagedItems">
+          <td>{{timesheet.Users}}</td>
+          <td>{{timesheet.Client}}</td>
+          <td>{{timesheet.Project}}</td>
+          <td>{{timesheet.Job}}</td>
+          <td>{{timesheet.WorkDate | date : 'dd/MM/yyyy'}}</td>
+          <td>{{timesheet.WorkHour}}</td>
+          <td>{{timesheet.Comments}}</td>
+          <td *ngIf="timesheet.IsBillable">Yes</td>
+          <td *ngIf="!timesheet.IsBillable">No</td>
+          <td>
+            <a (click)="EditTimesheet(timesheet)" class="glyphicon glyphicon-pencil"></a>&nbsp;&nbsp;
+            <a (click)="DeleteTimesheet(timesheet.Id)" class="glyphicon glyphicon-trash"></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <div class="container">
+      <div class="text-center">
+        <!-- pager -->
+        <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+          <li [ngClass]="{disabled:pager.currentPage === 1}">
+            <a (click)="setPage(1)">First</a>
+          </li>
+          <li [ngClass]="{disabled:pager.currentPage === 1}">
+            <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+          </li>
+          <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+            <a (click)="setPage(page)">{{page}}</a>
+          </li>
+          <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+            <a (click)="setPage(pager.currentPage + 1)">Next</a>
+          </li>
+          <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+            <a (click)="setPage(pager.totalPages)">Last</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-md-3">
+      <button class="btn btn-primary" (click)="ExportTimesheetData()" [disabled]="loadingTimesheets || !ShowTimesheetData || loading">Export
+        To CSV</button>
+    </div>
+  </div>
+</div>

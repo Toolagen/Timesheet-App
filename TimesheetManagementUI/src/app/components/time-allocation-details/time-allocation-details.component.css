@@ -1,0 +1,84 @@
+.backgroundcolor {
+    background-color:#e6e6e6;
+    border-radius: 10px;
+}
+
+* {
+    box-sizing: border-box;
+  }
+
+.column {
+    float: left;
+    width: 33.3%;
+    padding: 0 10px;       
+    /* height: 300px;    */
+
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;        
+}
+
+/* Responsive columns */
+@media screen and (max-width: 991px) {
+.column {
+    width: 50%;
+    display: block;
+    /* height: 300px;     */
+     
+}
+}
+
+@media screen and (max-width: 600px) {
+.column {
+    width: 100%;
+    display: block;  
+    height: auto;          
+}
+}
+
+/* Style the counter cards */
+.card {
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+padding: 16px;    
+background-color: #f1f1f1;
+border-radius: 10px;
+}
+
+.bold {      
+    font-weight: bold;    
+    font-size:16px; 
+}
+
+.btnstyle {    
+margin: 5px;
+padding: 3px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.modified {
+    font-style: italic;
+    text-align: right; 
+    font-size: 14px; 
+    margin-bottom: -10px;    
+}
+
+.nodata {
+    font-size:18px;    
+    margin-bottom: -10px;
+}
+
+.loading {
+    text-align: right;
+    font-size: 18px;    
+    padding: 15px;
+    font-weight: bold;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  }
+

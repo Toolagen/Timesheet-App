@@ -1,0 +1,185 @@
+<div class="container">
+  <div *ngIf="showLoadingGreeting" class="loading-container">
+    <!-- {{ "Welcome" }} {{ formattedName }} {{ "Have a nice day" }}   -->
+    <div class="container ">
+      <div class="welcome">Welcome</div>
+      <div class="name">{{ formattedName }}</div>
+      <div class="nice-day">Have a nice day!</div>
+    </div>
+  </div>
+
+  <div *ngIf="!showLoadingGreeting">
+    <!-- existing content goes here -->
+    <div class="container">
+      <form (ngSubmit)="f.form.valid && onTimesheetSubmit()" #f="ngForm" novalidate class="jumbotron">
+        <div class="form-group row">
+          <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorDate}">
+            <label for="ex3">Date:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+              <input class="form-control" type="date" name="taskdate" [(ngModel)]="timesheet.Date" #taskdate="ngModel"
+                (change)="getUserTimesheetDataByDate(timesheet.Date)" max={{today}}>
+            </div>
+            <div *ngIf="validationErrorDate" class="help-block">{{validationErrorDate}}</div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorClient }">
+            <label for="ex1">Clients:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <select class="form-control" [(ngModel)]="timesheet.ClientId" name="clientselect" (ngModelChange)="onClientChange()">
+                <option value="" selected disabled>Select Client*</option>
+                <option [value]="client.Id" *ngFor="let client of clients">
+                  {{client.Name}}
+                </option>
+              </select>
+            </div>
+            <div *ngIf="validationErrorClient" class="help-block">{{validationErrorClient}}</div>
+          </div>
+          <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorProject }">
+            <label for="ex1">Projects:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <select class="form-control" [(ngModel)]="timesheet.ProjectId" name="projectselect" (ngModelChange)="onProjectChange()">
+                <option value="" disabled selected>Select Project*</option>
+                <ng-container *ngFor="let project of projects">
+                  <ng-container *ngIf="timesheet.ClientId == project.ClientId">
+                    <option [value]="project.Id">{{project.Name}}</option>
+                  </ng-container>
+                </ng-container>
+              </select>
+            </div>
+            <div *ngIf="validationErrorProject" class="help-block">{{validationErrorProject}}</div>
+          </div>
+    
+          <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorJob }">
+            <label for="ex2">Jobs:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <select class="form-control" [(ngModel)]="timesheet.JobId" name="jobselect" (ngModelChange)="onJobChange($event)">
+                <option value="" disabled selected>Select Job*</option>
+                <ng-container *ngFor="let job of jobs">
+                  <ng-container *ngIf="timesheet.ProjectId == job.ProjectId">
+                    <option [value]="job.Id">{{job.Name}}</option>
+                  </ng-container>
+                </ng-container>
+              </select>
+            </div>
+            <div *ngIf="validationErrorJob" class="help-block">{{validationErrorJob}}</div>
+          </div>
+    
+          <div class="col-md-3" [ngClass]="{ 'has-error': validationErrorHour}">
+            <label for="ex3">Hours:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span>
+              <input class="form-control" placeholder="Enter hours *" type="number" name="hours" [(ngModel)]="timesheet.Hours"
+                #hours="ngModel" min="0" max="24">
+            </div>
+            <div *ngIf="validationErrorHour" class="help-block">{{validationErrorHour}}</div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-12">
+            <label for="ex3">Comments:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-list-alt"></i></span>
+              <textarea class="form-control" placeholder="Enter comments (optional) (Maximum 500 characters only)" id="comments"
+                name="comments" [(ngModel)]="timesheet.Comments" maxlength="500" (focusout)="RemoveCommentWhiteSpaces()"></textarea>
+            </div>
+          </div>
+        </div>
+    
+        <div class="checkbox" title="Billable tasks">
+          <label><input type="checkbox" [(ngModel)]="timesheet.IsBillable" #isBillable="ngModel" name="IsBillable" disabled>Is
+            Billable?</label>
+        </div>
+        <div *ngIf="timesheet.Id" class="col-md-2">
+          <button [disabled]="updating" type="submit" class="btn btn-primary btn-block">Update</button>
+        </div>
+        <div *ngIf="timesheet.Id" class="col-md-2">
+          <button [disabled]="updating" type="text" class="btn btn-default btn-block" (click)="CancelEdit()">Cancel</button>
+        </div>
+        <div *ngIf="!timesheet.Id" class="col-md-2">
+          <button [disabled]="loading" type="submit" class="btn btn-primary btn-block">Save</button>
+        </div>
+        <div class="col-md-4">
+          <span *ngIf="updating" class="loading"><img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            &nbsp;Updating Data...</span>
+        </div>
+      </form>
+    
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{successMessage}}
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-success">
+        {{errorMessage}}
+      </div>
+      <br>
+      <h4>Timesheet data for
+        <b>{{timesheet.Date | date:'dd MMMM yyyy'}}</b>
+        <span *ngIf="loading" class="loading"><img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+          &nbsp;Loading Data...</span></h4>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Work Date</th>
+              <th>Client</th>
+              <th>Project</th>
+              <th>Job</th>
+              <th>Work Hours</th>
+              <th>Comments</th>
+              <th>Is Billable?</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="!ShowTimesheetData">
+              <td colspan="8">No data found...</td>
+            </tr>
+            <tr *ngFor="let timesheet of pagedItems">
+              <td>{{timesheet.WorkDate | date : 'dd/MM/yyyy'}}</td>
+              <td>{{timesheet.Client}}</td>
+              <td>{{timesheet.Project}}</td>
+              <td>{{timesheet.Job}}</td>
+              <td>{{timesheet.WorkHour}}</td>
+              <td>{{timesheet.Comments}}</td>
+              <td *ngIf="timesheet.IsBillable">Yes</td>
+              <td *ngIf="!timesheet.IsBillable">No</td>
+              <td><a (click)="EditTimesheet(timesheet)" class="glyphicon glyphicon-pencil"></a>
+                &nbsp;&nbsp;<a (click)="DeleteTimesheet(timesheet.Id)" class="glyphicon glyphicon-trash"></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    
+      <div>
+        <div class="container">
+          <div class="text-center">
+            <!-- pager -->
+            <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+              <li [ngClass]="{disabled:pager.currentPage === 1}">
+                <a (click)="setPage(1)">First</a>
+              </li>
+              <li [ngClass]="{disabled:pager.currentPage === 1}">
+                <a (click)="setPage(pager.currentPage - 1)">Previous</a>
+              </li>
+              <li *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}">
+                <a (click)="setPage(page)">{{page}}</a>
+              </li>
+              <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                <a (click)="setPage(pager.currentPage + 1)">Next</a>
+              </li>
+              <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}">
+                <a (click)="setPage(pager.totalPages)">Last</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

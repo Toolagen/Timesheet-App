@@ -1,0 +1,375 @@
+<div class="container backgroundcolor">
+  <div class="row">
+    <div class="col-md-4 marginright">
+      <form (ngSubmit)="f.form.valid && onJobDataSubmit()" #f="ngForm" novalidate autocomplete="off">
+        <h3 class="margin"><span class="hrule"><span *ngIf="!AddJob.Id">Create New</span><span *ngIf="AddJob.Id">Update</span>
+            Job:</span></h3>
+
+        <!-- -------------------------  Client in Job form  ------------------------ -->
+        <div class="form-group row">
+          <div class="col-md-12" [ngClass]="{ 'has-error': validationErrorClient }">
+            <label *ngIf="!loadingClients" for="ex1">Client:</label>
+            <label *ngIf="loadingClients" for="ex1">Loading Clients...</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <select class="form-control" [ngModel]="AddJob.ClientId" name="clientselect" (ngModelChange)="onClientChange($event)">
+                <option [ngValue]="null" disabled selected>Select Client*</option>
+                <option [value]="client.Id" *ngFor="let client of clients">
+                  {{client.Name}}
+                </option>
+              </select>
+              <span class="input-group-addon plusbutton" title="Add New Client"><button type="button" (click)="loadclientform()"
+                  class="pointer btnbg" [disabled]="loadClient || loadProject || loadJob ||updateJob || updateClient || updateProject">
+                  <i class="glyphicon glyphicon-plus"></i></button></span>
+            </div>
+            <div *ngIf="validationErrorClient" class="help-block">{{validationErrorClient}}</div>
+          </div>
+        </div>
+
+        <!-- -------------------------  Project in Job form  -------------------------->
+        <div class="form-group row">
+          <div class="col-md-12" [ngClass]="{ 'has-error': validationErrorProject }">
+            <label *ngIf="!loadingProjects" for="ex1">Project:</label>
+            <label *ngIf="loadingProjects" for="ex1">Loading Projects...</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <select class="form-control" [(ngModel)]="AddJob.ProjectId" name="projectselect" (ngModelChange)="onProjectChange($event)">
+                <option [ngValue]="null" disabled selected>Select Project*</option>
+                <option [value]="project.Id" *ngFor="let project of projects">
+                  {{project.Name}}
+                </option>
+              </select>
+              <span class="input-group-addon plusbutton" title="Add New Project" *ngIf="addproject"><button type="button"
+                  class="pointer btnbg" (click)="loadprojectform()" [disabled]="loadClient || loadProject || loadJob ||updateJob || updateClient || updateProject">
+                  <i class="glyphicon glyphicon-plus"></i></button></span>
+            </div>
+            <div *ngIf="validationErrorProject" class="help-block">{{validationErrorProject}}</div>
+          </div>
+        </div>
+
+        <!-- -------------------------  Job  ------------------------ -->
+        <div class="form-group row">
+          <div class="col-md-12" [ngClass]="{ 'has-error': validationErrorJob }">
+            <label for="ex3">Job:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <input class="form-control" type="text" name="Name" placeholder="Enter name" [(ngModel)]="AddJob.Job">
+            </div>
+            <div *ngIf="validationErrorJob" class="help-block">{{validationErrorJob}}</div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-12">
+            <label for="ex1">Description:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <textarea class="form-control" placeholder="Description..." name="Description" [(ngModel)]="AddJob.Description"
+                maxlength="200"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="checkbox" title="Select it for billable tasks">
+              <label><input type="checkbox" [(ngModel)]="AddJob.IsBillable" #isBillable="ngModel" name="IsBillable">Is
+                Billable?</label>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-6">
+            <div class="checkbox" title="Select it for Active Jobs">
+              <label><input type="checkbox" [(ngModel)]="AddJob.StatusId" #isBillable="ngModel" name="IsActive">Is
+                Active?</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-md-3 col-sm-3 col-xs-3" *ngIf="!AddJob.Id">
+            <button [disabled]="loadClient || loadProject || loadJob ||updateJob || updateClient || updateProject" type="submit"
+              class="btn btn-primary">Add</button>
+          </div>
+          <div class="col-md-3 col-sm-3 col-xs-3" *ngIf="!AddJob.Id">
+            <button [disabled]="loadClient || loadProject || loadJob ||updateJob || updateClient || updateProject" type="button"
+              class="btn btn-primary" (click)="clearJobForm()">Clear</button>
+          </div>
+          <div class="col-md-3 col-sm-3 col-xs-3" *ngIf="AddJob.Id">
+            <button [disabled]="loadClient || loadProject || loadJob ||updateJob || updateClient || updateProject" type="submit"
+              class="btn btn-primary">Update</button>
+          </div>
+          <div class="col-md-3 col-sm-3 col-xs-3" *ngIf="AddJob.Id">
+            <button [disabled]="loadClient || loadProject || loadJob ||updateJob || updateClient || updateProject" type="button"
+              class="btn btn-primary" (click)="cancelJobForm()">Cancel</button>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-6">
+            <span *ngIf="updateJob" class="loading">
+              <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+              &nbsp;Updating...</span>
+          </div>
+        </div>
+      </form>
+      <br>
+    </div>
+
+    <!-- **************************************** New Client Form **************************************** -->
+    <div class="col-md-7 marginleft" *ngIf="clientformload">
+      <form (ngSubmit)="onClientDataSubmit()" #f="ngForm" novalidate autocomplete="off">
+        <h3 class="margin"><span class="hrule"><span *ngIf="!AddClient.Id">Create New</span><span *ngIf="AddClient.Id">Update</span>
+            Client:</span></h3>
+        <div class="form-group row">
+          <div class="col-md-8" [ngClass]="{ 'has-error': validationNewClient}">
+            <label for="ex1">Name:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <input class="form-control" type="text" name="Name" [(ngModel)]="AddClient.Name">
+            </div>
+            <div *ngIf="validationNewClient" class="help-block">{{validationNewClient}}</div>
+            <br>
+          </div>
+          <div class="col-md-8">
+            <label for="ex1">Description:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-list-alt"></i></span>
+              <textarea class="form-control" name="Description" placeholder="Description..." [(ngModel)]="AddClient.Description"
+                maxlength="200"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-8">
+            <div class="checkbox" title="Select it for Active Clients">
+              <label><input type="checkbox" [(ngModel)]="AddClient.StatusId" #isBillable="ngModel" name="IsActive">Is
+                Active?</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-2 col-sm-2 col-xs-2" *ngIf="!AddClient.Id">
+            <button [disabled]="updateClient || updateJob" type="submit" class="btn btn-primary">Add</button>
+          </div>
+          <div class="col-md-2 col-sm-2 col-xs-2" *ngIf="AddClient.Id">
+            <button [disabled]="updateClient || updateJob" type="submit" class="btn btn-primary">Update</button>
+          </div>
+          <div class="col-md-2 col-sm-2 col-xs-2">
+            <button [disabled]="updateClient || updateJob" class="btn btn-primary" (click)="CancelClientform()">Cancel</button>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-6">
+            <span *ngIf="updateClient" class="loading">
+              <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+              &nbsp;Data Updating...</span>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- ************************ New Project Form ***************************** -->
+    <div class="col-md-7 marginleft" *ngIf="projectformload">
+      <form (ngSubmit)="onProjectDataSubmit()" #f="ngForm" novalidate autocomplete="off">
+        <h3 class="margin"><span class="hrule"><span *ngIf="!AddProject.Id">Create New</span><span *ngIf="AddProject.Id">Update</span>
+            Project:</span></h3>
+        <div class="form-group row">
+          <div class="col-md-6">
+            <h4>Client: {{AddJob.Client}}</h4>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-8" [ngClass]="{ 'has-error': validationNewProject}">
+            <label for="ex1">Name:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <input class="form-control" type="text" name="Name" [(ngModel)]="AddProject.Name">
+            </div>
+            <div *ngIf="validationNewProject" class="help-block">{{validationNewProject}}</div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-md-8" *ngIf="!AddProject.Id">
+            <label for="ex1">Add default Jobs:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <select class="form-control" [(ngModel)]="AddProject.projectType" name="projectType" (ngModelChange)="onProjectTypeChange($event)">
+                <option [ngValue]="0" selected>None</option>
+                <option [ngValue]="1">Software Jobs</option>
+                <option [ngValue]="2">BPO Jobs</option>
+              </select>
+            </div>
+          </div>
+        </div>
+  
+        <div class="form-group row">
+          <div class="col-md-8">
+            <label for="ex1">Description:</label>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
+              <textarea class="form-control" placeholder="Description..." name="Description" [(ngModel)]="AddProject.Description"
+                maxlength="200"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-md-12">
+            <div class="checkbox" title="Select it for Active Projects">
+              <label><input type="checkbox" [(ngModel)]="AddProject.StatusId" #isBillable="ngModel" name="IsActive">Is
+                Active?</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-2 col-sm-2 col-xs-2" *ngIf="!AddProject.Id">
+            <button [disabled]="updateProject || updateJob" type="submit" class="btn btn-primary">Add</button>
+          </div>
+          <div class="col-md-2 col-sm-2 col-xs-2" *ngIf="AddProject.Id">
+            <button [disabled]="updateProject || updateJob" type="submit" class="btn btn-primary">Update</button>
+          </div>
+          <div class="col-md-2 col-sm-2 col-xs-2">
+            <button [disabled]="updateProject || updateJob" class="btn btn-primary" (click)="CancelProjectform()">Cancel</button>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-6">
+            <span *ngIf="updateProject" class="loading">
+              <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+              &nbsp;Data Updating...</span>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- *************************************** All Active Clients *************************************** -->
+    <div class="col-md-7 marginleft" *ngIf="activeClient">
+      <div class="row">
+        <div class="col-md-10">
+          <h3 class="fontstyle"><span *ngIf="!isClient">In</span>Active Clients:
+            <span *ngIf="loadClient" class="loading">
+              <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+              &nbsp;Loading...</span></h3>
+        </div>
+        <div class="col-md-2">
+          <div class="checkbox margin" title="Select to view Active/InActive Clients">
+            <input [disabled]="loadClient" class="pointer" type="checkbox" [(ngModel)]="isClient" (click)="onActiveClientChange($event)"><span>
+              IS ACTIVE?</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="noClients">
+              <td colspan="3">No Clients to display</td>
+            </tr>
+            <tr *ngFor="let client of viewClients">
+              <td>{{client.Name}}</td>
+              <td>{{client.Description}}</td>
+              <td><a (click)="EditClient(client)" class="glyphicon glyphicon-pencil pointer"></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- *************************************** All Active Projects *************************************** -->
+    <div class="col-md-7 marginleft" *ngIf="activeProject">
+      <div class="row">
+        <div class="col-md-10">
+          <h3 class="fontstyle"><span *ngIf="!isProject">In</span>Active Projects of Client: {{AddJob.Client}}
+            <span *ngIf="loadProject" class="loading">
+              <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+              &nbsp;Loading...</span></h3>
+        </div>
+        <div class="col-md-2">
+          <div class="checkbox margin" title="Select to view for Active/InActive Projects">
+            <input type="checkbox" [disabled]="loadProject" class="pointer" [(ngModel)]="isProject" (click)="onActiveProjectChange($event)"><span>
+              IS ACTIVE?</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="noProject">
+              <td colspan="3">No Projects to display.</td>
+            </tr>
+            <tr *ngFor="let project of viewProjects">
+              <td>{{project.Name}}</td>
+              <td>{{project.Description}}</td>
+              <td><a (click)="Editproject(project)" class="glyphicon glyphicon-pencil pointer"></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- *************************************** All Active Jobs *************************************** -->
+    <div class="col-md-7 marginleft" *ngIf="activeJob">
+      <div class="row">
+        <div class="col-md-10">
+          <h3 class="fontstyle"><span *ngIf="!isJob">In</span>Active Jobs of Project: {{AddJob.Project}}
+            <span *ngIf="loadJob" class="loading">
+              <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+              &nbsp;Loading...</span></h3>
+        </div>
+        <div class="col-md-2">
+          <div class="checkbox margin" title="Select to view Active/InActive Jobs">
+            <input type="checkbox" [disabled]="loadJob" class="pointer" [(ngModel)]="isJob" (click)="onActiveJobChange($event)"><span>
+              IS ACTIVE?</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>IsBillable</th>
+              <th>Action</th>              
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="noJobs">
+              <td colspan="5">No Jobs to display.</td>
+            </tr>
+            <tr *ngFor="let job of jobs; let i = index">
+              <td>{{job.Name}}</td>
+              <td>{{job.Description}}</td>
+              <td *ngIf="job.IsBillable">Yes</td>
+              <td *ngIf="!job.IsBillable">No</td>
+              <td><a (click)="Editjob(job)" class="glyphicon glyphicon-pencil pointer"></a> &nbsp; 
+                <a (click)="Deletejob(job)" class="glyphicon glyphicon-trash pointer"></a> &nbsp;
+                <span *ngIf="deleteJob && loader == job.Id">
+                  <img src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                  </span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<!-- ****************** Success or Error Message ************************ -->
+<div class="container">
+  <div class="row">
+    <div *ngIf="successMessage" class="alert {{alertClass}}">
+      {{successMessage}}
+    </div>
+  </div>
+</div>
