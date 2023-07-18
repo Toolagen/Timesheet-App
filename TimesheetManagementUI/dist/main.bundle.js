@@ -4301,7 +4301,7 @@ var _a;
 // The file contents for the current environment will overwrite these during build.
 var environment = {
     production: false,
-    origin: 'https://tg-service-timesheet.azurewebsites.net'
+    origin: 'https://tg-servce-timesheet.azurewebsites.net'
 };
 //# sourceMappingURL=environment.js.map
 

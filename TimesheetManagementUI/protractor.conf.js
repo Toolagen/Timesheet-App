@@ -12,7 +12,7 @@ exports.config = {
     'browserName': 'chrome'
   },
   directConnect: true,
-  baseUrl: 'https://tg-service-timesheet.azurewebsites.net',
+  baseUrl: 'https://tg-servce-timesheet.azurewebsites.net',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,

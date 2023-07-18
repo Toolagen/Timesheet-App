@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  origin: 'https://tg-service-timesheet.azurewebsites.net'
+  origin: 'https://tg-servce-timesheet.azurewebsites.net'
 };
