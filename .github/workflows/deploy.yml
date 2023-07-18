@@ -10,7 +10,7 @@
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   AZURE_WEBAPP_NAME: tg-servce-timesheet   # set this to your application's name
