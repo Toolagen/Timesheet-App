@@ -1,21 +1,25 @@
 module.exports = {
 
-     'url': {
+    'url': {
 
-        user: 'sa',
+        user: 'tgadmin',
 
-        password: 'To0lagen@5',
+        password: 'To0lagen',
 
-        server: 'TG-LAP-33',
+        server: 'tgsqlserver.database.windows.net', // You can use 'localhost\\instance' to connect to named instance
 
         database: 'TG-Database',
 
-        port: 1433,
+        port:1433,
+
+
+
 
         options: {
 
-            encrypt: true
+            encrypt: true // Use this if you're on Windows Azure
 
         }
-            }
+
+    }
 }
