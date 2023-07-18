@@ -1,6 +1,6 @@
 module.exports = {
-    'clientID': '8f5ba004-186c-4eed-82c3-8e36b0c192c2',
-    'clientSecret': 'cEA8Q~AypZ23lQxH1RqJu0DbFvifQpdrG1GONaGs',
+    'clientID': '969f9951-de01-47b1-90a9-a1a87e7a2447',
+    'clientSecret': 'jLV8Q~rS6NnWpG5RpxRJ0B0iJyqsYFNtxAL5hclA',
     'returnURL' :'https://tg-servce-timesheet.azurewebsites.net/auth/openid/return',
    // 'returnURL': 'https://localhost:3000/auth/openid/return',
     // 'realm': '',
