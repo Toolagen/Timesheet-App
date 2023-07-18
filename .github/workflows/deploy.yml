@@ -45,7 +45,7 @@ jobs:
     needs: build
     environment:
       name: 'production'
-      url: 'http://tg-servce-timesheet.azurewebsites.net'
+      url: 'https://tg-servce-timesheet.azurewebsites.net'
 
     steps:
     - name: Download artifact from build job
