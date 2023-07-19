@@ -15,7 +15,7 @@ export class AuthenticationService {
   }
 
   // login() : Observable<boolean>{
-  //   return this.http.get('http://localhost:3000/login')
+  //   return this.http.get('https://tg-servce-timesheet.azurewebsites.net/login')
   //     .map((response: Response) => {
   //       // login successful if there's a jwt token in the response
 

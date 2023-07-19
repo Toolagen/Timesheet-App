@@ -23,23 +23,26 @@ module.exports = function(req, res, next) {
       var decoded = jwt.decode(token, config.secretkey);
  
 
-      // if (decoded.exp <= Date.now()) {
-      //   res.status(401);
-      //   res.json({
-      //     "status": 401,
-      //     "message": "Token Expired"
-      //   });
-      //   return;
-      // }
+      if (decoded.exp <= Date.now()) {
+        res.status(401);
+        res.json({
+          "status": 401,
+          "message": "Token Expired"
+        });
+        return;
+      }
+      else{
+        userValidated = true;
+      }
  
       // validate user
-      for (var i = 0, len = config.Users.length; i < len; i++) {
-        var user = config.Users[i];
-        if (user.upn === decoded.uemail) {
-            userValidated = true;
-            break;
-        }
-      }
+      // for (var i = 0 ; i <= config.Users.length; i++) {
+      //   var user = config.Users[i];
+      //   if (user == decoded.uemail) {
+      //       userValidated = true;
+      //       break;
+      //   }
+      // }
 
       if(userValidated){
           next();
