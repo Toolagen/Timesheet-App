@@ -352,12 +352,13 @@ export class AddnewClientProjectComponent implements OnInit {
     this.AddProject.ClientId = this.AddJob.ClientId;
   
     if (this.validateProject()) {
-      this.updateProject = true;
+      // this.updateProject = true;
       this.projectService.addProject(this.AddProject)
         .then(data => {
           if (data) {
             this.onClientChange(this.AddJob.ClientId);
             if (data.status == "success") {
+             
               this.AddJob.ProjectId = data.recordset.output.InsertedId;
               this.AddJob.Project = this.AddProject.Name;
   

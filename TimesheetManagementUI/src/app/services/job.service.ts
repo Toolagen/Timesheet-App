@@ -24,11 +24,24 @@ export class JobService {
       .catch(this.handleError);
   }
 
+  // deleteJobEntry(id): Promise<object> {
+  //   return this.http.delete(this.serviceUrl + '/api/v1/jobs/deleteJobEntry/' + id + '?access_token='+ this.token + "&x_key=" + this.key).toPromise()
+  //     .then(this.extractAllJobsData)
+  //     .catch(this.handleError);
+  // }
+  
   deleteJobEntry(id): Promise<object> {
-    return this.http.delete(this.serviceUrl + '/api/v1/jobs/deleteJobEntry/' + id + '?access_token='+ this.token + "&x_key=" + this.key).toPromise()
-      .then(this.extractAllJobsData)
-      .catch(this.handleError);
+    const requestBody = {}; // Empty object as the request body
+  
+    return this.http.post(
+      this.serviceUrl + '/api/v1/jobs/deleteJobEntry/' + id + '?access_token=' + this.token + '&x_key=' + this.key,
+      requestBody // Provide an empty object as the request body
+    )
+    .toPromise()
+    .then(this.extractAllJobsData)
+    .catch(this.handleError);
   }
+  
 
   private extractJobStatus(res: Response) {
     let body = res.json();
