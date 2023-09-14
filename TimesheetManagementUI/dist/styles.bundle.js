@@ -3,7 +3,7 @@ webpackJsonp(["styles"],{
 /***/ "./node_modules/raw-loader/index.js!./node_modules/postcss-loader/lib/index.js??embedded!./src/styles.css":
 /***/ (function(module, exports) {
 
-module.exports = "/* You can add global styles to this file, and also import other style files */\ninput[type=date]::-webkit-inner-spin-button {\n    -webkit-appearance: none;\n    display: none;\n}\n::-webkit-clear-button\n{\n    display: none; /* Hide the button */\n    -webkit-appearance: none; /* turn off default browser styling */\n}\n"
+module.exports = "/* You can add global styles to this file, and also import other style files */\r\ninput[type=date]::-webkit-inner-spin-button {\r\n    -webkit-appearance: none;\r\n    display: none;\r\n}\r\n::-webkit-clear-button\r\n{\r\n    display: none; /* Hide the button */\r\n    -webkit-appearance: none; /* turn off default browser styling */\r\n}\r\n"
 
 /***/ }),
 
