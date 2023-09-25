@@ -41,7 +41,7 @@
         <span class="input-group-addon">
           <i class="glyphicon glyphicon-filter"></i>
         </span>
-        <select class="form-control" [ngModel]="filterClientId" name="clientselectFilter" [disabled]="this.timesheetVisible"
+        <select class="form-control" [(ngModel)]="filterClientId" name="clientselectFilter" [disabled]="this.timesheetVisible"
           #clientselect="ngModel" (ngModelChange)="onClientChangeFilter($event)">
           <option value="">-- All Clients --</option>
           <option [value]="client.Id" *ngFor="let client of clients">
@@ -59,7 +59,7 @@
         <span class="input-group-addon">
           <i class="glyphicon glyphicon-filter"></i>
         </span>
-        <select class="form-control" [ngModel]="filterProjectId" name="projectselectFilter" [disabled]="this.timesheetVisible" #projectselect="ngModel"
+        <select class="form-control" [(ngModel)]="filterProjectId" name="projectselectFilter" [disabled]="this.timesheetVisible" #projectselect="ngModel"
           (ngModelChange)="onProjectChangeFilter($event)">
           <option value="">-- All Projects --</option>
           <option [value]="project.Id" *ngFor="let project of projects">
@@ -148,6 +148,7 @@
           <select [(ngModel)]="selectedProjectStatus" (ngModelChange)="onProjectStatusChange()" class="form-control">
             <option value=1 selected>Active Clients & Projects</option>
             <option value=2 >Inactive Clients & Projects</option>
+            <option value=3 >Active Clients & Inactive Projects</option>
           </select>
         </div>
       </div> 

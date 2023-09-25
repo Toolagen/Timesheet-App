@@ -133,6 +133,8 @@ export class TimesheetEntryReportComponent implements OnInit {
   onProjectStatusChange()
   {
     // console.log(this.selectedProjectStatus)
+    this.filterClientId =0;
+    this.filterProjectId=0;
     this.getClients();
   }
 
@@ -140,7 +142,7 @@ export class TimesheetEntryReportComponent implements OnInit {
   getClients() {
     this.loadingClients = true;
     
-    if (this.selectedProjectStatus == 1) {
+    if (this.selectedProjectStatus == 1 || this.selectedProjectStatus == 3) {
       this.clientService.getAllClients()
         .subscribe(
           data => {
@@ -292,7 +294,7 @@ export class TimesheetEntryReportComponent implements OnInit {
       this.filterTimesheetData();
     }     
     }
-    else{
+    else if(this.selectedProjectStatus==2 || this.selectedProjectStatus==3){
       this.projects=[];  
     this.filterProjectId = null;
     this.filterUserId=null;
@@ -733,4 +735,3 @@ class GridData {
     public IsBillable: string,
   ) { }
 }
-
