@@ -33,6 +33,21 @@
 
 
   <div class="form-group row">
+
+       <!-- filter by active/inactive-->
+   <div class="col-md-3">
+    <label for="ex1">Filter By Status:</label>
+    <div class="input-group">
+      <span class="input-group-addon">
+        <i class="glyphicon glyphicon-filter"></i>
+      </span>
+      <select [(ngModel)]="selectedProjectStatus" (ngModelChange)="onProjectStatusChange()" class="form-control">
+        <option value=1 selected>Active Clients & Projects</option>
+        <option value=2 >Inactive Clients & Projects</option>
+        <option value=3 >Active Clients & Inactive Projects</option>
+      </select>
+    </div>
+  </div> 
     <div class="col-md-3">
       <label *ngIf="!loadingClients" for="ex1">Filter By Clients:</label>
       <label *ngIf="loadingClients" for="ex1">
@@ -87,7 +102,9 @@
         </select>
       </div>
     </div>
+    <br>
     <div class="col-md-3">
+      <br>
       <label for="ex1">Filter By Billable:</label>
       <div class="input-group">
         <span class="input-group-addon">
@@ -120,8 +137,6 @@
           </select>
         </div>
       </div> -->
-
-
       <div class="col-md-3 mt-3 mb-3">
         <br>
         <label for="ex1">Filter By Pages:</label>
@@ -136,28 +151,6 @@
           </select>
         </div>
       </div>
-      
-    <!-- filter by active/inactive-->
-      <div class="col-md-3 mt-3 mb-3">
-        <br>
-        <label for="ex1">Filter By Status:</label>
-        <div class="input-group">
-          <span class="input-group-addon">
-            <i class="glyphicon glyphicon-filter"></i>
-          </span>
-          <select [(ngModel)]="selectedProjectStatus" (ngModelChange)="onProjectStatusChange()" class="form-control">
-            <option value=1 selected>Active Clients & Projects</option>
-            <option value=2 >Inactive Clients & Projects</option>
-            <option value=3 >Active Clients & Inactive Projects</option>
-          </select>
-        </div>
-      </div> 
-    
-    
-    
-    
-  
-    
     <!-- <div class="col-md-3">
         <label for="ex1"></label>
         <div class="input-group">
