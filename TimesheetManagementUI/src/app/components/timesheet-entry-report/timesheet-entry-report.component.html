@@ -34,20 +34,41 @@
 
   <div class="form-group row">
 
-       <!-- filter by active/inactive-->
-   <div class="col-md-3">
-    <label for="ex1">Filter By Status:</label>
-    <div class="input-group">
-      <span class="input-group-addon">
-        <i class="glyphicon glyphicon-filter"></i>
-      </span>
-      <select [(ngModel)]="selectedProjectStatus" (ngModelChange)="onProjectStatusChange()" class="form-control">
-        <option value=1 selected>Active Clients & Projects</option>
-        <option value=2 >Inactive Clients & Projects</option>
-        <option value=3 >Active Clients & Inactive Projects</option>
-      </select>
-    </div>
-  </div> 
+     <!-- filter by active/inactive-->
+    <div class="col-md-3">
+     <label for="ex1">Client Status:</label>
+      <div class="input-group">
+       <span class="input-group-addon">
+       <i class="glyphicon glyphicon-filter"></i>
+       </span>
+       <select [(ngModel)]="selectedProjectStatus1" (ngModelChange)="onProjectStatusChange()" class="form-control">
+      <option value="1" >Active</option>
+      <option value="2">Inactive</option>
+       </select>
+       </div>
+      </div> 
+
+      <div class="col-md-3">
+        <label for="ex1">Project Status:</label>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="glyphicon glyphicon-filter"></i>
+          </span>
+          <select [(ngModel)]="selectedProjectStatus2" (ngModelChange)="onProjectStatusChange1()" class="form-control">
+            <ng-container *ngIf="selectedProjectStatus1 == '1';then activeOption; else inactiveOption">
+            </ng-container>
+            <ng-template #activeOption><option value="1" >Active</option>
+              <option value="2">Inactive</option></ng-template>
+
+            <ng-template #inactiveOption>
+              <option value="2" >Inactive</option>
+            </ng-template>
+          </select>
+        </div>
+      </div>
+      
+
+  
     <div class="col-md-3">
       <label *ngIf="!loadingClients" for="ex1">Filter By Clients:</label>
       <label *ngIf="loadingClients" for="ex1">
@@ -85,7 +106,8 @@
     </div>
 
 
-    <div class="col-md-3">
+    <div class="col-md-3 mt-3 mb-3">
+      <br>
       <label *ngIf="!loadingUsers" for="ex1">Filter By Users:</label>
       <label *ngIf="loadingUsers" for="ex1">
         <i class="glyphicon glyphicon-refresh"></i> Loading Users...</label>
@@ -103,7 +125,7 @@
       </div>
     </div>
     <br>
-    <div class="col-md-3">
+    <div class="col-md-3 mt-3 mb-3">
       <br>
       <label for="ex1">Filter By Billable:</label>
       <div class="input-group">

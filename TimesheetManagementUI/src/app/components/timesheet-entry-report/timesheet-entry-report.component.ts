@@ -102,6 +102,8 @@ export class TimesheetEntryReportComponent implements OnInit {
   public allProjects: Project[];
   public AddJob = new AddClientProject(null, null, null, null, null, null, null, null, "", false, true, null);
   public validationNewProject: string;
+  selectedProjectStatus1: number;
+  selectedProjectStatus2: number;
   constructor(
     private http: Http,
     private userService: UserService,
@@ -122,7 +124,8 @@ export class TimesheetEntryReportComponent implements OnInit {
     this.ToDate = this.formatDate(new Date(this.today));
     this.weeklyTimesheetEntry.ToDate = this.ToDate;
     this.getUserByEmail(this.loggedInUserEmail);
-    
+    this.selectedProjectStatus1 = 1; // Active
+    this.selectedProjectStatus2 = 1; // Active
     //this.getProjects();
     this.getAllUsers();
     this.timesheetVisible = false;
@@ -132,17 +135,31 @@ export class TimesheetEntryReportComponent implements OnInit {
   }
   onProjectStatusChange()
   {
+    
+    this.projects=null;
+    this.selectedProjectStatus2=null;
+    if (this.selectedProjectStatus1 === 1) {
+      this.selectedProjectStatus2 = 1;
+    }else if(this.selectedProjectStatus1 == 2)
+    {
+      this.selectedProjectStatus2 = 2;
+      this.onProjectStatusChange1()
+    }
     // console.log(this.selectedProjectStatus)
+    this.getClients();
     this.filterClientId =0;
     this.filterProjectId=0;
-    this.getClients();
   }
+  onProjectStatusChange1(){
+    this.getClients();
+    this.filterClientId =0;
+    this.filterProjectId=0;
 
-
+  }
   getClients() {
     this.loadingClients = true;
     
-    if (this.selectedProjectStatus == 1 || this.selectedProjectStatus == 3) {
+    if ((this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==1) ||((this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==2))) {
       this.clientService.getAllClients()
         .subscribe(
           data => {
@@ -180,7 +197,7 @@ export class TimesheetEntryReportComponent implements OnInit {
   // }
 
   onClientChange(newClientId) {
-   if(this.selectedProjectStatus==1)
+   if(this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==1)
    {
     this.timesheet.ProjectId = null;
     this.timesheet.ClientId = newClientId;
@@ -269,7 +286,7 @@ export class TimesheetEntryReportComponent implements OnInit {
 
   //Filter By Clients
   onClientChangeFilter(newClientIdFilter) { 
-    if(this.selectedProjectStatus==1)
+    if(this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==1)
     {
       this.projects=[];  
     this.filterProjectId = null;
@@ -294,7 +311,7 @@ export class TimesheetEntryReportComponent implements OnInit {
       this.filterTimesheetData();
     }     
     }
-    else if(this.selectedProjectStatus==2 || this.selectedProjectStatus==3){
+    else if((this.selectedProjectStatus1 == 2 && this.selectedProjectStatus2==2) ||(this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==2)){
       this.projects=[];  
     this.filterProjectId = null;
     this.filterUserId=null;
@@ -735,3 +752,4 @@ class GridData {
     public IsBillable: string,
   ) { }
 }
+
