@@ -1778,7 +1778,7 @@ var TimesheetEntryReportComponent = (function () {
             this.onProjectStatusChange1();
         }
         // console.log(this.selectedProjectStatus)
-        this.getClients();
+        // this.getClients();
         this.filterClientId = 0;
         this.filterProjectId = 0;
     };
@@ -1790,11 +1790,36 @@ var TimesheetEntryReportComponent = (function () {
     TimesheetEntryReportComponent.prototype.getClients = function () {
         var _this = this;
         this.loadingClients = true;
-        if ((this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2 == 1) || ((this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2 == 2))) {
-            this.clientService.getAllClients()
-                .subscribe(function (data) {
-                _this.allClients = data;
-                _this.clients = _this.allClients.filter(function (c) { return c.StatusId == 1; });
+        if (this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2 == 2) {
+            this.projectService.getInactiveProjectsClients().subscribe(function (data) {
+                _this.clients = data;
+                if (_this.clients.length === 0) {
+                    _this.ShowTimesheetData = false;
+                    _this.loadingTimesheets = false;
+                    _this.timesheets = _this.cachedTimesheets;
+                    _this.timesheets = null;
+                    _this.totalHours = 0;
+                    _this.pagedItems = null;
+                    window.alert("Active Clients & Inactive Projects Report doesn't exist !");
+                }
+                _this.loadingClients = false;
+            }, function (error) {
+                _this.loadingClients = false;
+                _this.errorMessage = "";
+            });
+        }
+        else if (this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2 == 1) {
+            this.projectService.getActiveProjectsClients().subscribe(function (data) {
+                _this.clients = data;
+                if (_this.clients.length === 0) {
+                    _this.ShowTimesheetData = false;
+                    _this.loadingTimesheets = false;
+                    _this.timesheets = _this.cachedTimesheets;
+                    _this.timesheets = null;
+                    _this.totalHours = 0;
+                    _this.pagedItems = null;
+                    window.alert("Active Clients & Active Projects Report doesn't exist !");
+                }
                 _this.loadingClients = false;
             }, function (error) {
                 _this.loadingClients = false;
@@ -1802,10 +1827,17 @@ var TimesheetEntryReportComponent = (function () {
             });
         }
         else {
-            this.clientService.getAllClients()
-                .subscribe(function (data) {
-                _this.allClients = data;
-                _this.clients = _this.allClients.filter(function (c) { return c.StatusId == 2; });
+            this.projectService.getInactiveProjectsInactiveClients().subscribe(function (data) {
+                _this.clients = data;
+                if (_this.clients.length === 0) {
+                    _this.ShowTimesheetData = false;
+                    _this.loadingTimesheets = false;
+                    _this.timesheets = _this.cachedTimesheets;
+                    _this.timesheets = null;
+                    _this.totalHours = 0;
+                    _this.pagedItems = null;
+                    window.alert("Inactive Clients & Inactive Projects Report doesn't exist !");
+                }
                 _this.loadingClients = false;
             }, function (error) {
                 _this.loadingClients = false;
@@ -3933,6 +3965,24 @@ var ProjectService = (function () {
     };
     ProjectService.prototype.getAllProjects = function () {
         var url = this.serviceUrl + "/api/v1/projects/getAll?access_token=" + this.token + "&x_key=" + this.key;
+        return this.http.get(url)
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_3_rxjs_operators__["b" /* map */])(this.extractData), Object(__WEBPACK_IMPORTED_MODULE_3_rxjs_operators__["a" /* catchError */])(this.handleProjectError) // Corrected method name
+        );
+    };
+    ProjectService.prototype.getInactiveProjectsClients = function () {
+        var url = this.serviceUrl + "/api/v1/projects/getInactiveProjectsClients?access_token=" + this.token + "&x_key=" + this.key;
+        return this.http.get(url)
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_3_rxjs_operators__["b" /* map */])(this.extractData), Object(__WEBPACK_IMPORTED_MODULE_3_rxjs_operators__["a" /* catchError */])(this.handleProjectError) // Corrected method name
+        );
+    };
+    ProjectService.prototype.getActiveProjectsClients = function () {
+        var url = this.serviceUrl + "/api/v1/projects/getActiveProjectsClients?access_token=" + this.token + "&x_key=" + this.key;
+        return this.http.get(url)
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_3_rxjs_operators__["b" /* map */])(this.extractData), Object(__WEBPACK_IMPORTED_MODULE_3_rxjs_operators__["a" /* catchError */])(this.handleProjectError) // Corrected method name
+        );
+    };
+    ProjectService.prototype.getInactiveProjectsInactiveClients = function () {
+        var url = this.serviceUrl + "/api/v1/projects/getInactiveProjectsInactiveClients?access_token=" + this.token + "&x_key=" + this.key;
         return this.http.get(url)
             .pipe(Object(__WEBPACK_IMPORTED_MODULE_3_rxjs_operators__["b" /* map */])(this.extractData), Object(__WEBPACK_IMPORTED_MODULE_3_rxjs_operators__["a" /* catchError */])(this.handleProjectError) // Corrected method name
         );

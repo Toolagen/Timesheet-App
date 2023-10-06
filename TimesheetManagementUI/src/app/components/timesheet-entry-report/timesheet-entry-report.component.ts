@@ -146,7 +146,7 @@ export class TimesheetEntryReportComponent implements OnInit {
       this.onProjectStatusChange1()
     }
     // console.log(this.selectedProjectStatus)
-    this.getClients();
+    // this.getClients();
     this.filterClientId =0;
     this.filterProjectId=0;
   }
@@ -158,34 +158,75 @@ export class TimesheetEntryReportComponent implements OnInit {
   }
   getClients() {
     this.loadingClients = true;
-    
-    if ((this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==1) ||((this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==2))) {
-      this.clientService.getAllClients()
-        .subscribe(
-          data => {
-            this.allClients = data;
-            this.clients = this.allClients.filter(c => c.StatusId == 1);
-            this.loadingClients = false;
-          },
-          error => {
-            this.loadingClients = false;
-            this.errorMessage = "";
-          }
-        );
-    } else
+
+            if(this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==2)
+            {
+          this.projectService.getInactiveProjectsClients().subscribe(
+            data => {
+              this.clients = data;
+              if(this.clients.length===0)
+              {
+              this.ShowTimesheetData=false
+              this.loadingTimesheets = false;
+              this.timesheets = this.cachedTimesheets;
+              this.timesheets=null;
+              this.totalHours=0;
+              this.pagedItems=null
+              window.alert("Active Clients & Inactive Projects Report doesn't exist !")
+              }
+              this.loadingClients = false;
+            },
+            error => {
+              this.loadingClients = false;
+              this.errorMessage = "";
+            }
+            );
+            }
+            else if(this.selectedProjectStatus1 == 1 && this.selectedProjectStatus2==1)
+            {
+              this.projectService.getActiveProjectsClients().subscribe(
+                data => {
+                  this.clients = data;
+                  if(this.clients.length===0)
+                  {
+                  this.ShowTimesheetData=false
+                  this.loadingTimesheets = false;
+                  this.timesheets = this.cachedTimesheets;
+                  this.timesheets=null;
+                  this.totalHours=0;
+                  this.pagedItems=null
+                  window.alert("Active Clients & Active Projects Report doesn't exist !")
+                  }
+                  this.loadingClients = false;
+                },
+                error => {
+                  this.loadingClients = false;
+                  this.errorMessage = "";
+                }
+                );
+            }
+    else
     {
-      this.clientService.getAllClients()
-      .subscribe(
+      this.projectService.getInactiveProjectsInactiveClients().subscribe(
         data => {
-          this.allClients=data;
-          this.clients =this.allClients.filter(c => c.StatusId ==2)
+          this.clients = data;
+          if(this.clients.length===0)
+          {
+          this.ShowTimesheetData=false
+          this.loadingTimesheets = false;
+          this.timesheets = this.cachedTimesheets;
+          this.timesheets=null;
+          this.totalHours=0;
+          this.pagedItems=null
+          window.alert("Inactive Clients & Inactive Projects Report doesn't exist !")
+          }
           this.loadingClients = false;
         },
         error => {
           this.loadingClients = false;
           this.errorMessage = "";
         }
-      );
+        );
     }
     
   }

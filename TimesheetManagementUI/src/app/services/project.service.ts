@@ -32,6 +32,30 @@ export class ProjectService {
         catchError(this.handleProjectError) // Corrected method name
       );
   }
+  getInactiveProjectsClients(): Observable<Project[]> {
+    const url = `${this.serviceUrl}/api/v1/projects/getInactiveProjectsClients?access_token=${this.token}&x_key=${this.key}`;
+    return this.http.get(url)
+      .pipe(
+        map(this.extractData),
+        catchError(this.handleProjectError) // Corrected method name
+      );
+  }
+  getActiveProjectsClients(): Observable<Project[]> {
+    const url = `${this.serviceUrl}/api/v1/projects/getActiveProjectsClients?access_token=${this.token}&x_key=${this.key}`;
+    return this.http.get(url)
+      .pipe(
+        map(this.extractData),
+        catchError(this.handleProjectError) // Corrected method name
+      );
+  }
+  getInactiveProjectsInactiveClients(): Observable<Project[]> {
+    const url = `${this.serviceUrl}/api/v1/projects/getInactiveProjectsInactiveClients?access_token=${this.token}&x_key=${this.key}`;
+    return this.http.get(url)
+      .pipe(
+        map(this.extractData),
+        catchError(this.handleProjectError) // Corrected method name
+      );
+  }
 
   getProjectsByClient(clientId): Observable<Project[]> {
     const url = `${this.serviceUrl}/api/v1/projects/getByClient/${clientId}?access_token=${this.token}&x_key=${this.key}`;

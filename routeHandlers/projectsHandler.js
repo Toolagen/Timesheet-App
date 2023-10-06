@@ -5,7 +5,10 @@ var dbConfig = require('../config/database');
 var ProjectsHandler = function () {
     this.add = add;
     this.getAll = getAll;
-    this.getByClient = getByClient;    
+    this.getByClient = getByClient;  
+    this.getInactiveProjectsClient=getInactiveProjectsClients;  
+    this.getActiveProjectsClients=getActiveProjectsClients;
+    this.getInactiveProjectsInactiveClients=getInactiveProjectsInactiveClients;
 };
 
 
@@ -77,4 +80,31 @@ function getByClient (req, res) {
     });
 }
 
+function getInactiveProjectsClients(_, res) {
+  return new sql.ConnectionPool(dbConfig.url).connect().then(pool => {
+      return pool.request().execute('getInactiveProjectsClients')
+  }).then(result => {
+      res.status(200).json({ status: "success", projects: result.recordset });
+  }).catch(err => {
+      res.status(500).json({ projects: JSON.stringify(err) });
+  });
+}
+function getActiveProjectsClients(_, res) {
+  return new sql.ConnectionPool(dbConfig.url).connect().then(pool => {
+      return pool.request().execute('getActiveProjectsClients')
+  }).then(result => {
+      res.status(200).json({ status: "success", projects: result.recordset });
+  }).catch(err => {
+      res.status(500).json({ projects: JSON.stringify(err) });
+  });
+}
+function getInactiveProjectsInactiveClients(_, res) {
+  return new sql.ConnectionPool(dbConfig.url).connect().then(pool => {
+      return pool.request().execute('getInactiveProjectsInactiveClients')
+  }).then(result => {
+      res.status(200).json({ status: "success", projects: result.recordset });
+  }).catch(err => {
+      res.status(500).json({ projects: JSON.stringify(err) });
+  });
+}
 module.exports = ProjectsHandler;
