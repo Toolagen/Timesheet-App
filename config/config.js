@@ -29,7 +29,7 @@ exports.creds = {
   // Required if `responseType` is 'code', 'id_token code' or 'code id_token'. 
   // If app key contains '\', replace it with '\\'.
   //clientSecret: 'EcQ8Q~xfSRCPlkcc55RMh8szgC8Sig_gcLdeYcW9',
-  clientSecret:'EcQ8Q~xfSRCPlkcc55RMh8szgC8Sig_gcLdeYcW9', 
+  clientSecret:'NGE8Q~Ij8Xw2.iE5KJ_iKs.PZHcuYVX1yrbX0dsX', 
 
   // Required to set to false if you don't want to validate issuer
   validateIssuer: true,
