@@ -408,7 +408,7 @@ export class AddnewClientProjectComponent implements OnInit {
     this.activeJob = false;
     this.clientformload = false;
     this.projectformload = true;
-    this.AddProject = new Project(null, null, "", null, null, null, 1, 0, this.AddProject.CreatedId);
+    this.AddProject = new Project(null, null, "", null, null, null, 1, 1, this.AddProject.CreatedId);
   }
 
   //------------------- Cancel Project form ---------------------

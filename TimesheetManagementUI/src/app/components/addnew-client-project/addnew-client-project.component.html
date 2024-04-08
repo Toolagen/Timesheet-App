@@ -188,8 +188,8 @@
             <div class="input-group">
               <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
               <select class="form-control" [(ngModel)]="AddProject.projectType" name="projectType" (ngModelChange)="onProjectTypeChange($event)">
-                <option [ngValue]="0" selected>None</option>
-                <option [ngValue]="1">Software Jobs</option>
+                <option [ngValue]="0">None</option>
+                <option [ngValue]="1" selected>Software Jobs</option>
                 <option [ngValue]="2">BPO Jobs</option>
               </select>
             </div>
