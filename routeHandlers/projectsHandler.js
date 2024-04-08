@@ -30,7 +30,7 @@ function add(req, res) {
           .input("description", sql.VarChar(sql.MAX), project.Description)
           .input("clientId", sql.Int, project.ClientId)
           .input("statusId", sql.Bit, project.StatusId)
-          .input("projectType", sql.VarChar(sql.MAX), project.ProjectType) // Add the 'projectType' parameter here
+          .input("projectType", sql.Int, project.projectType)
           .output("InsertedId", sql.Int)
           .execute("AddProjects");
       })
@@ -52,10 +52,8 @@ function add(req, res) {
           .json({ status: "error", statusCode: "500", message: "Internal server error" });
       });
   }
+    
   
-  // Rest of the code remains the same
-  
-
 function getAll(req, res) {
     return new sql.ConnectionPool(dbConfig.url).connect().then(pool => {
         return pool.request().execute('GetAllActiveProjects')
